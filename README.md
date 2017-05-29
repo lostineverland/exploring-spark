@@ -50,6 +50,8 @@ When considering periodic updates the first thing that comes to mind is a cron j
 
 Once there's a solution established for  `how to create the table`, this could take shape (though it can also inform/influence the former).
 
+Because this is timeseries data, it is relevant to consider partitioning the data based on a time interval. For this particular exercise a daily partition is relevant, thus it would be worth adding an additional column for day, which could be used to specify the partitioning.
+
 #### 3 Query
 
 The table rows shall be keyed by the combination of `user_id` & `domain_name`.
@@ -67,11 +69,39 @@ It's best to try and fail on a tight feedback loop. To accomplish this, setting 
 
 A quick search for Spark 2.0 on docker revealed an accessible version of [Apache Spark on Docker](https://hub.docker.com/r/aghorbani/spark/).
 
+#### Dev Env
+
+To setup the container environment:
+
+##### Setup Container
+```
+> git clone git@github.com:a-ghorbani/docker-spark.git
+> cd docker-spark
+> docker pull aghorbani/spark:2.1.0
+> docker build --rm -t aghorbani/spark:2.1.0 .
+```
+##### Start Container
+```
+> docker run \
+ -v ./src:/data \
+ -it \
+ -p 8088:8088 \
+ -p 8042:8042 \
+ -p 4040:4040 \
+ -h sandbox aghorbani/spark:2.1.0 \
+ bash
+```
+
 #### Test Data
 
-With a working environment for executing jobs/queries, it follows that test data is generated. The following characteristics were considered in generating test data
+With a working environment for executing jobs/queries, it follows that test data is generated. The following characteristics were considered when generating test data
 
 * collisions in time stamp are possible
 * data may not arrive in chronological order
 * combine list of domains with list of users (user == user_id)
 * use random integers to generate paths of url
+* for this exercise `STRING` timestamps are sufficient as the comparator operators (`>`, erc.) work with ISO-8601 dates
+
+##### Code
+
+A simple [python script](./src/generateData.py) was used to generate the data.
