@@ -1,8 +1,6 @@
 ''' Quick script to generate data which conforms to the spec'''
 import random, datetime
-from pyspark import SparkContext
 
-sc = SparkContext("local", "Generate Data")
 
 ISO_8601_HOURS = '%Y-%m-%dT%H'
 day = datetime.timedelta(days=1)
@@ -95,6 +93,8 @@ def build_tables(days=60, daily_rows=30):
         [])
 
 def main():
+    from pyspark import SparkContext
+    sc = SparkContext("local", "Generate Data")
     pageviews = sc.parallelize(build_tables()).toDF(["timestamp", "domain_name", "page_url", "user"])
     pageviews.write.saveAsTable(name='pageviews', format='parquet')
     # pageviews.write.save('pageviews/large')
