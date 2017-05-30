@@ -46,7 +46,7 @@ When considering periodic updates the first thing that comes to mind is a cron j
 * cron
 * AWS Lambda recurring function
 * if batch jobs are already scheduled in hadoop, this could be just one more `jar` to execute
-* presumably, Spark may also have a feature to handle this task
+* ~~presumably, Spark may also have a feature to handle this task~~
 
 Once there's a solution established for  `how to create the table`, this could take shape (though it can also inform/influence the former).
 
@@ -223,14 +223,15 @@ spark.sql('''
 only showing top 50 rows
 ```
 
-### Create and Update Results
+### Create and Update Results (not functional yet)
+
 
 There are some aspects to be considered when updating the data. The results table will always grow because the value of first visit can not be thrown away.
 
 To update the reports periodically the steps are
 
 1. generate a new report for the last 30 days
-1. change the `first` visit value the older values that exist in the previous report
+1. change the `first` visit to the older values that exist in the previous report
 1. add old values which are not populated in new results and zero out the frequency and count
 1. store new report
 
@@ -238,7 +239,7 @@ The scipt is included [here](./src/updateTable.py).
 
 Due to some issues with namespace or perhaps sessions, the scripts need to be executed manually from a pyspark terminal.
 
-Still missing is the initialization of the report table, which establishes the combination of domain_name and usr as the primary key. I would opt for a key-value store instead.
+Still missing is the initialization of the report table, which establishes the combination of domain_name and usr as the primary key. I would opt for a key-value store instead. Some iterations are still needed to verify if values are indeed being replaced.
 
 ## Some Thoughts
 
