@@ -58,6 +58,7 @@ def main(iso_date):
         update new values from existing table,
         save results'''
     old_table = spark.sql('select * from {0}'.format(REPORT_TABLE))
+    # new_table_rows = get_new_table(iso_date).toLocalIterator() # <-- lazy way to collect
     new_table_rows = get_new_table(iso_date).collect()
     new_values = dict(zip(map(makeKey, new_table_rows), new_table_rows))
     for row in old_table.collect():
