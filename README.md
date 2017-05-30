@@ -25,13 +25,13 @@ First a look at what the data looks like.
 
 ### Requirements
 
-1. build a table of Recency and Frequency of each user visiting a domain
-1. table should refresh daily once a day
-1. query for each user domain combo
+* build a table of Recency and Frequency of each user visiting a domain
+* table should refresh daily once a day
+* query for each user domain combo
   - frequency of the visits in last 30 days
   - when was the first visit (lifetime)
   - when was the first last (lifetime)
-1. implement using Spark2.0 or Hive SQL
+* implement using Spark2.0 or Hive SQL
 
 ### Parsing Requirements
 
