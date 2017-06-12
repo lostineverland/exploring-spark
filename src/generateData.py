@@ -1,4 +1,5 @@
 ''' Quick script to generate data which conforms to the spec'''
+from pyspark import SparkContext, SparkConf, SQLContext
 import random, datetime
 
 
@@ -92,14 +93,22 @@ def build_tables(days=60, daily_rows=30):
         iso_8601_ts(days),
         [])
 
-def main():
-    from pyspark import SparkContext
-    sc = SparkContext("local", "Generate Data")
-    pageviews = sc.parallelize(build_tables()).toDF(["timestamp", "domain_name", "page_url", "user"])
-    pageviews.write.saveAsTable(name='pageviews', format='parquet')
-    # pageviews.write.save('pageviews/large')
-    # pageviews = spark.read.load('pageviews/large')
+def main(sc, sqlContext):
+    print('-'*10 + 'here' + '-'*10)
+    # print(sc.getConf().getAll())
+    pageviews = sc.parallelize(build_tables())
+    df = sqlContext.createDataFrame(pageviews, ["timestamp", "domain_name", "page_url", "user"])
+    # df = sc.parallelize(build_tables()).toDF(["timestamp", "domain_name", "page_url", "user"])
+    # df.write.saveAsTable(name='pageviews', format='parquet')
+    df.write.save('pageviews', format='parquet')
+    # df = sqlContext.read.load('pageviews')
 
 if __name__ == '__main__':
-    main()
-
+    print("main is executed")
+    conf = SparkConf().setAppName("generate_data")
+    # conf.set('hive.metastore.warehouse.dir', 'file:/spark-warehouse')
+    # conf.set(u'spark.sql.catalogImplementation', 'hive'),
+    # conf.set("hive.metastore.warehouse.dir", "file:/spark-warehouse")
+    sc = SparkContext(conf=conf)
+    sqlContext = SQLContext(sc)
+    main(sc, sqlContext)
