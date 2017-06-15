@@ -112,3 +112,8 @@ if __name__ == '__main__':
     sc = SparkContext(conf=conf)
     sqlContext = SQLContext(sc)
     main(sc, sqlContext)
+
+# Working w/ Parquet & S3
+# S3_PATH = 's3a://mypageviews/year={year:04g}/month={month:02g}/day={day:02g}'.format(year=year, month=month, day=day)
+# df = sqlContext.read.load(S3_PATH)
+# df.repartition(1).saveAsParquetFile(S3_PATH + '-repartitioned')
